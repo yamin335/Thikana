@@ -6,7 +6,7 @@
 
         <variable
             name="viewModel"
-            type="com.mallzhub.customer.ui.topup.TopUpAmountViewModel" />
+            type="com.rtchubs.thikana.ui.topup.TopUpAmountViewModel" />
     </data>
 
     <RelativeLayout

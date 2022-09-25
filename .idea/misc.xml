@@ -61,6 +61,7 @@
         <entry key="app/src/main/res/layout/fragment_wallet.xml" value="0.45" />
         <entry key="app/src/main/res/layout/layout_add_payment_method.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/layout/layout_bank_list_row.xml" value="0.36041666666666666" />
+        <entry key="app/src/main/res/layout/layout_operator_selection.xml" value="0.246875" />
         <entry key="app/src/main/res/layout/layout_payment_method_row.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/layout/list_item_cart.xml" value="0.36041666666666666" />
         <entry key="app/src/main/res/layout/list_item_cart_overview.xml" value="0.36041666666666666" />

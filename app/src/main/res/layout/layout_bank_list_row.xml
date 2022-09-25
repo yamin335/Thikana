@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout>
 
-    <data>
+    <data class="LayoutBankListRowBinding">
         <import type="com.bumptech.glide.request.RequestListener"/>
         <import type="android.graphics.drawable.Drawable"/>
         <variable
             name="model"
-            type="com.mallzhub.customer.models.payment_account_models.BankOrCard" />
+            type="com.rtchubs.thikana.models.payment_account_models.BankOrCard" />
 
         <variable
             name="imageRequestListener"

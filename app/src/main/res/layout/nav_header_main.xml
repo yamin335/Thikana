@@ -3,7 +3,7 @@
 
     <data>
         <variable name="viewModel"
-            type="com.mallzhub.customer.ui.MainActivityViewModel"/>
+            type="com.rtchubs.thikana.ui.MainActivityViewModel"/>
     </data>
 
     <FrameLayout

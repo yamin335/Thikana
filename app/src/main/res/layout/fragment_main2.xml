@@ -6,7 +6,7 @@
     <data class="Home2Binding">
         <variable
             name="viewModel"
-            type="com.mallzhub.customer.ui.home.HomeViewModel" />
+            type="com.rtchubs.thikana.ui.home.HomeViewModel" />
     </data>
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
