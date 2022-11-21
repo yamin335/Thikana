@@ -24,4 +24,6 @@ data class OfferProduct(val id: Int?, val created_at: String?, val updated_at: S
 //                    val type: String?, val offer_discount_type: Any?, val offer_discount_percent: Any?,
 //                    val offer_banner: String?, val offer_valid_from: String?, val offer_valid_to: String?)
 
-data class MerchantWiseOffer(val merchantId: Int, val merchantName: String?, val offerProductList: List<OfferProduct>)
+data class MerchantWiseOffer(val merchantId: Int, val merchantName: String?,
+                             val mallName: String?, val mallLevelID: Int?,
+                             val offerProductList: List<OfferProduct>)

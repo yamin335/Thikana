@@ -435,7 +435,7 @@ class CameraFragment : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             outputDirectory.listFiles { file ->
                 EXTENSION_WHITELIST.contains(file.extension.toUpperCase(Locale.ROOT))
-            }?.max()?.let {
+            }.maxOrNull()?.let {
                 setGalleryThumbnail(Uri.fromFile(it))
             }
         }

@@ -103,7 +103,7 @@
 
     <style name="EditTextStyle" parent="Widget.AppCompat.EditText" />
     <style name="EditTextStyle.Amount">
-        <item name="android:drawableStart">@drawable/ic_launcher_background</item>
+        <item name="android:drawableStart">@drawable/thikana_app_icon</item>
         <item name="android:inputType">numberDecimal</item>
         <item name="android:maxLength">@integer/amount_length</item>
     </style>

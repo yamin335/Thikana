@@ -5,20 +5,26 @@ import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.DataSource
 import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
+import com.daimajia.slider.library.Tricks.ViewPagerEx
 import com.rtchubs.thikana.BR
 import com.rtchubs.thikana.R
 import com.rtchubs.thikana.databinding.Home2Binding
 import com.rtchubs.thikana.models.ShoppingMall
+import com.rtchubs.thikana.models.ShoppingMallGroup
 import com.rtchubs.thikana.ui.LogoutHandlerCallback
 import com.rtchubs.thikana.ui.NavDrawerHandlerCallback
 import com.rtchubs.thikana.ui.common.BaseFragment
 import com.rtchubs.thikana.ui.login.SliderView
+import com.rtchubs.thikana.util.RecyclerSectionItemDecoration
+import com.rtchubs.thikana.util.showSuccessToast
 
 class Home2Fragment : BaseFragment<Home2Binding, HomeViewModel>() {
     override val bindingVariable: Int
@@ -35,7 +41,14 @@ class Home2Fragment : BaseFragment<Home2Binding, HomeViewModel>() {
 
     private var drawerListener: NavDrawerHandlerCallback? = null
 
-    private var allShoppingMall = ArrayList<ShoppingMall>()
+    private var allShoppingMall = ArrayList<ShoppingMallGroup>()
+
+    private lateinit var mallGroupsAdapter: ShoppingMallGroupListAdapter
+
+    private lateinit var mallGroupsSectionItemDecoration: RecyclerSectionItemDecoration
+
+    var mallTypes = arrayOf("all", "mall", "location", "virtual")
+    var mallTypeLabels = arrayOf("All Malls", "Shopping Malls", "Location Shops", "Metaverse Malls")
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -69,23 +82,6 @@ class Home2Fragment : BaseFragment<Home2Binding, HomeViewModel>() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        //registerToolbar(viewDataBinding.toolbar)
-
-//        viewDataBinding.cardTopUp.setOnClickListener {
-//            navController.navigate(Home2FragmentDirections.actionHome2FragmentToTopUpMobileFragment(
-//                TopUpHelper()
-//            ))
-//        }
-//
-//        val token = preferencesHelper.getAccessTokenHeader()
-//
-//        paymentListAdapter = PaymentMethodListAdapter(appExecutors) {
-//            //navController.navigate(HomeFragmentDirections.actionBooksToChapterList(it))
-//        }
-//
-//
-//
-
         viewDataBinding.btnNewChat.setOnClickListener {
             navigateTo(Home2FragmentDirections.actionHome2FragmentToBotNav())
         }
@@ -118,177 +114,92 @@ class Home2Fragment : BaseFragment<Home2Binding, HomeViewModel>() {
             viewDataBinding.sliderLayout.addSlider(slide)
         }
 
-        viewDataBinding.item1.setOnClickListener {
-            if (allShoppingMall.isNotEmpty()) {
-                navController.navigate(Home2FragmentDirections.actionHome2FragmentToAllShopListFragment(allShoppingMall[0]))
+//        viewDataBinding.pagerMask.setOnClickListener {
+//            val position = viewDataBinding.sliderLayout.currentPosition
+//            showSuccessToast(requireContext(), "Page selected with position: $position")
+//        }
+
+        mallGroupsAdapter = ShoppingMallGroupListAdapter(appExecutors) {
+            navController.navigate(Home2FragmentDirections.actionHome2FragmentToAllShopListFragment(it))
+        }
+
+        mallGroupsSectionItemDecoration = RecyclerSectionItemDecoration(requireContext()) {
+            mallGroupsAdapter.currentList
+        }
+
+        viewDataBinding.recyclerMallGroups.addItemDecoration(mallGroupsSectionItemDecoration)
+
+        viewDataBinding.recyclerMallGroups.adapter = mallGroupsAdapter
+
+        val mallsTypeSpinnerAdapter = ArrayAdapter(requireContext(), R.layout.spinner_item, mallTypeLabels)
+        mallsTypeSpinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        viewDataBinding.spinnerFilter.adapter = mallsTypeSpinnerAdapter
+
+        viewDataBinding.spinnerFilter.onItemSelectedListener = object : AdapterView.OnItemClickListener,
+            AdapterView.OnItemSelectedListener {
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                prepareRecyclerView()
+                when(mallTypes[position]) {
+                    "all" -> {
+                        mallGroupsAdapter.submitList(allShoppingMall)
+                    }
+                    "mall" -> {
+                        mallGroupsAdapter.submitList(allShoppingMall.filter { it.type == "mall" })
+                    }
+                    "location" -> {
+                        mallGroupsAdapter.submitList(allShoppingMall.filter { it.type == "location" })
+                    }
+                    "virtual" -> {
+                        mallGroupsAdapter.submitList(allShoppingMall.filter { it.type == "virtual" })
+                    }
+                }
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+            }
+
+            override fun onItemClick(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+
             }
         }
 
-        viewDataBinding.item2.setOnClickListener {
-            if (allShoppingMall.size > 1) {
-                navController.navigate(Home2FragmentDirections.actionHome2FragmentToAllShopListFragment(allShoppingMall[1]))
-            }
-        }
-
-        viewDataBinding.item3.setOnClickListener {
-            if (allShoppingMall.size > 2) {
-                navController.navigate(Home2FragmentDirections.actionHome2FragmentToAllShopListFragment(allShoppingMall[2]))
-            }
-        }
-
-        viewDataBinding.item4.setOnClickListener {
-            if (allShoppingMall.size > 3) {
-                navController.navigate(Home2FragmentDirections.actionHome2FragmentToAllShopListFragment(allShoppingMall[3]))
-            }
-        }
-
-        viewDataBinding.item5.setOnClickListener {
-            if (allShoppingMall.size > 4) {
-                navController.navigate(Home2FragmentDirections.actionHome2FragmentToAllShopListFragment(allShoppingMall[4]))
-            }
-        }
-
-        viewDataBinding.item6.setOnClickListener {
-            navController.navigate(Home2FragmentDirections.actionHome2FragmentToMoreShoppingMallFragment())
-        }
-
-        viewModel.allShoppingMallResponse.observe(viewLifecycleOwner, Observer { response ->
+        viewModel.allShoppingMallResponse.observe(viewLifecycleOwner, { response ->
             response?.data?.let { mallList ->
-                allShoppingMall = mallList as ArrayList<ShoppingMall>
+                val shoppingMalls = ArrayList<ShoppingMall>()
+                val locationMalls = ArrayList<ShoppingMall>()
+                val metaverseMalls = ArrayList<ShoppingMall>()
                 if (mallList.isNotEmpty()) {
-                    viewDataBinding.label1.text = mallList[0].name
-                    Glide.with(requireContext()).load(mallList[0].thumbnail).listener(object :
-                        RequestListener<Drawable?> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            viewDataBinding.logo1.setImageResource(R.drawable.shopping_mall)
-                            return true
+                    for (mall in mallList) {
+                        when (mall.mall_type) {
+                            "mall" -> {
+                                shoppingMalls.add(mall)
+                            }
+                            "location" -> {
+                                locationMalls.add(mall)
+                            }
+                            "virtual" -> {
+                                metaverseMalls.add(mall)
+                            }
                         }
+                    }
 
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
-                        }
-
-                    }).into(viewDataBinding.logo1)
+                    allShoppingMall.clear()
+                    allShoppingMall.add(ShoppingMallGroup("Shopping Malls", "mall", shoppingMalls))
+                    allShoppingMall.add(ShoppingMallGroup("Location Shops", "location", locationMalls))
+                    allShoppingMall.add(ShoppingMallGroup("Metaverse Malls", "virtual", metaverseMalls))
                 }
-
-                if (mallList.size > 1) {
-                    viewDataBinding.label2.text = mallList[1].name
-                    Glide.with(requireContext()).load(mallList[1].thumbnail).listener(object :
-                        RequestListener<Drawable?> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            viewDataBinding.logo2.setImageResource(R.drawable.shopping_mall)
-                            return true
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
-                        }
-
-                    }).into(viewDataBinding.logo2)
-                }
-
-                if (mallList.size > 2) {
-                    viewDataBinding.label3.text = mallList[2].name
-                    Glide.with(requireContext()).load(mallList[2].thumbnail).listener(object :
-                        RequestListener<Drawable?> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            viewDataBinding.logo3.setImageResource(R.drawable.shopping_mall)
-                            return true
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
-                        }
-
-                    }).into(viewDataBinding.logo3)
-                }
-
-                if (mallList.size > 3) {
-                    viewDataBinding.label4.text = mallList[3].name
-                    Glide.with(requireContext()).load(mallList[3].thumbnail).listener(object :
-                        RequestListener<Drawable?> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            viewDataBinding.logo4.setImageResource(R.drawable.shopping_mall)
-                            return true
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
-                        }
-
-                    }).into(viewDataBinding.logo4)
-                }
-
-                if (mallList.size > 4) {
-                    viewDataBinding.label5.text = mallList[4].name
-                    Glide.with(requireContext()).load(mallList[4].thumbnail).listener(object :
-                        RequestListener<Drawable?> {
-                        override fun onLoadFailed(
-                            e: GlideException?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            viewDataBinding.logo5.setImageResource(R.drawable.shopping_mall)
-                            return true
-                        }
-
-                        override fun onResourceReady(
-                            resource: Drawable?,
-                            model: Any?,
-                            target: Target<Drawable?>?,
-                            dataSource: DataSource?,
-                            isFirstResource: Boolean
-                        ): Boolean {
-                            return false
-                        }
-
-                    }).into(viewDataBinding.logo5)
-                }
+                prepareRecyclerView()
+                mallGroupsAdapter.submitList(allShoppingMall)
             }
         })
 
@@ -311,6 +222,21 @@ class Home2Fragment : BaseFragment<Home2Binding, HomeViewModel>() {
 //                }
 //            }
 //        })
+    }
+
+    private fun prepareRecyclerView() {
+        viewDataBinding.recyclerMallGroups.removeItemDecoration(mallGroupsSectionItemDecoration)
+        mallGroupsAdapter = ShoppingMallGroupListAdapter(appExecutors) {
+            navController.navigate(Home2FragmentDirections.actionHome2FragmentToAllShopListFragment(it))
+        }
+
+        mallGroupsSectionItemDecoration = RecyclerSectionItemDecoration(requireContext()) {
+            mallGroupsAdapter.currentList
+        }
+
+        viewDataBinding.recyclerMallGroups.addItemDecoration(mallGroupsSectionItemDecoration)
+
+        viewDataBinding.recyclerMallGroups.adapter = mallGroupsAdapter
     }
 
 //    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -23,12 +23,18 @@ import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.graphics.*
 import android.net.Uri
+import android.os.Build
+import android.util.DisplayMetrics
 import android.util.Log
+import android.util.TypedValue
+import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.exifinterface.media.ExifInterface
 import java.io.IOException
 import java.io.InputStream
+import kotlin.math.roundToInt
 
 
 /** Utility class to provide helper methods.  */
@@ -44,7 +50,22 @@ object Utils {
 
     private const val TAG = "Utils"
 
+    fun dpToPx(context: Context, dp: Float): Int {
+        return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, dp, context.resources.displayMetrics).roundToInt()
+    }
 
+    fun getDisplayWidth(context: Context): Int {
+        val outMetrics = DisplayMetrics()
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            context.display?.getRealMetrics(outMetrics)
+        } else {
+            val display = (context.getSystemService(Context.WINDOW_SERVICE) as WindowManager).defaultDisplay
+            display.getMetrics(outMetrics)
+        }
+
+        return outMetrics.widthPixels
+    }
 
     internal fun requestRuntimePermissions(activity: Activity) {
 

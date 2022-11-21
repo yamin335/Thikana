@@ -4,6 +4,9 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/Thikana.iml" filepath="$PROJECT_DIR$/.idea/modules/Thikana.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Thikana.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Thikana.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Thikana.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Thikana.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Thikana.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Thikana.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/Thikana.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/Thikana.app.unitTest.iml" />
     </modules>
   </component>
 </project>

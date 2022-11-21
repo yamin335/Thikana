@@ -50,5 +50,7 @@ class OfferItemListAdapter(
         binding.rvOfferItems.adapter = offerProductListAdapter
         offerProductListAdapter.submitList(item.offerProductList)
         binding.shopName = item.merchantName
+        binding.mallName = "Mall: ${item.mallName}"
+        binding.mallLevel = "Level: ${item.mallLevelID}"
     }
 }

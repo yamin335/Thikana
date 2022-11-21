@@ -13,6 +13,7 @@ import com.rtchubs.thikana.models.MerchantWiseOffer
 import com.rtchubs.thikana.ui.LogoutHandlerCallback
 import com.rtchubs.thikana.ui.NavDrawerHandlerCallback
 import com.rtchubs.thikana.ui.common.BaseFragment
+import com.rtchubs.thikana.util.showErrorToast
 
 class OfferFragment : BaseFragment<OfferFragmentBinding, OfferViewModel>() {
     override val bindingVariable: Int
@@ -62,7 +63,11 @@ class OfferFragment : BaseFragment<OfferFragmentBinding, OfferViewModel>() {
         super.onViewCreated(view, savedInstanceState)
 
         offerItemListAdapter = OfferItemListAdapter(appExecutors) {
-            viewModel.getProductDetails(it.product_id).observe(viewLifecycleOwner, Observer { product ->
+            viewModel.getProductDetails(it.product_id).observe(viewLifecycleOwner, { product ->
+                if (product == null) {
+                    showErrorToast(requireContext(), "Offer product not found!")
+                    return@observe
+                }
                 product.merchant = it.merchant
                 navigateTo(OfferFragmentDirections.actionOfferFragmentToProductDetailsNavGraph(product, it.discount_percent ?: 0))
             })
@@ -89,7 +94,7 @@ class OfferFragment : BaseFragment<OfferFragmentBinding, OfferViewModel>() {
             }
         })
 
-        viewModel.offerProductList.observe(viewLifecycleOwner, Observer { list ->
+        viewModel.offerProductList.observe(viewLifecycleOwner, { list ->
             if (list.isEmpty()) {
                 viewDataBinding.rvOfferItems.visibility = View.GONE
                 viewDataBinding.emptyView.visibility = View.VISIBLE
@@ -102,15 +107,16 @@ class OfferFragment : BaseFragment<OfferFragmentBinding, OfferViewModel>() {
                 val merchantWiseProductsList: ArrayList<MerchantWiseOffer> = ArrayList()
                 for (key in merchantWiseProductsMap.keys) {
                     val productsList = merchantWiseProductsMap[key]
-                    val merchantName = if (!productsList.isNullOrEmpty()) {
-                        val shopName = productsList[0].merchant?.name
-                        if (shopName.isNullOrBlank()) "Unknown Shop" else shopName
-                    } else {
-                        "Unknown Shop"
+                    if (productsList.isNullOrEmpty()) {
+                        continue
                     }
 
+                    val merchantName = if (productsList[0].merchant?.name.isNullOrBlank()) "Unknown Shop" else productsList[0].merchant?.name
+                    val mallName = if (productsList[0].merchant?.shopping_mall?.name.isNullOrBlank()) "Unknown Mall" else productsList[0].merchant?.shopping_mall?.name
+                    val mallLevel = productsList[0].merchant?.shopping_mall_level_id ?: 0
+
                     if (key != null && !productsList.isNullOrEmpty()) {
-                        merchantWiseProductsList.add(MerchantWiseOffer(key, merchantName, productsList))
+                        merchantWiseProductsList.add(MerchantWiseOffer(key, merchantName, mallName, mallLevel, productsList))
                     }
                 }
 

@@ -13,26 +13,26 @@ import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.request.RequestListener
 import com.rtchubs.thikana.AppExecutors
 import com.rtchubs.thikana.R
-import com.rtchubs.thikana.databinding.FavoriteListItemBinding
+import com.rtchubs.thikana.databinding.ListItemShoppingMallBinding
 
-import com.rtchubs.thikana.models.Product
+import com.rtchubs.thikana.models.PaymentMethod
+import com.rtchubs.thikana.models.ShoppingMall
 import com.rtchubs.thikana.util.DataBoundListAdapter
-import kotlinx.android.synthetic.main.popup_menu_product_item.view.*
 
-class FavoriteListAdapter(
+class ShoppingMallListAdapter(
     private val appExecutors: AppExecutors,
-    private val actionCallback: FavoriteListActionCallback,
-    private val itemCallback: ((Product) -> Unit)? = null
-) : DataBoundListAdapter<Product, FavoriteListItemBinding>(
-    appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<Product>() {
-        override fun areItemsTheSame(oldItem: Product, newItem: Product): Boolean {
+    private val itemCallback: ((ShoppingMall) -> Unit)? = null
+
+) : DataBoundListAdapter<ShoppingMall, ListItemShoppingMallBinding>(
+    appExecutors = appExecutors, diffCallback = object : DiffUtil.ItemCallback<ShoppingMall>() {
+        override fun areItemsTheSame(oldItem: ShoppingMall, newItem: ShoppingMall): Boolean {
             return oldItem.id == newItem.id
         }
 
         @SuppressLint("DiffUtilEquals")
         override fun areContentsTheSame(
-            oldItem: Product,
-            newItem: Product
+            oldItem: ShoppingMall,
+            newItem: ShoppingMall
         ): Boolean {
             return oldItem == newItem
         }
@@ -41,31 +41,26 @@ class FavoriteListAdapter(
     // Properties
     private val viewPool: RecyclerView.RecycledViewPool = RecyclerView.RecycledViewPool()
 
-    val onClicked = MutableLiveData<Product>()
-    override fun createBinding(parent: ViewGroup): FavoriteListItemBinding {
+    val onClicked = MutableLiveData<PaymentMethod>()
+    override fun createBinding(parent: ViewGroup): ListItemShoppingMallBinding {
         return DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
-            R.layout.list_item_favorite, parent, false
+            R.layout.list_item_shopping_mall, parent, false
         )
     }
 
 
-    override fun bind(binding: FavoriteListItemBinding, position: Int) {
+    override fun bind(binding: ListItemShoppingMallBinding, position: Int) {
         val item = getItem(position)
-        binding.item = item
-        binding.imageUrl = item.thumbnail
+        binding.model = item
 
         binding.root.setOnClickListener {
             itemCallback?.invoke(item)
         }
 
-        binding.remove.setOnClickListener {
-            actionCallback.onRemove(item)
-        }
-
         binding.imageRequestListener = object: RequestListener<Drawable> {
             override fun onLoadFailed(e: GlideException?, model: Any?, target: com.bumptech.glide.request.target.Target<Drawable>?, isFirstResource: Boolean): Boolean {
-                binding.thumbnail.setImageResource(R.drawable.image_placeholder)
+                binding.logo.setImageResource(R.drawable.shopping_mall)
                 return true
             }
 
@@ -73,9 +68,5 @@ class FavoriteListAdapter(
                 return false
             }
         }
-    }
-
-    interface FavoriteListActionCallback {
-        fun onRemove(item: Product)
     }
 }
